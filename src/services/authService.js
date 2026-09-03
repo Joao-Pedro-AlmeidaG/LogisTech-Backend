@@ -5,7 +5,7 @@ const generateToken = require('../utils/generateToken');
 exports.register = async ({ nome, email, senha, perfil }) => {
   let existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new Error('E-mail já cadastrado.');
+    throw new Error('E-mail já cadastrado!!');
   }
 
   const salt = await bcrypt.genSalt(10);
