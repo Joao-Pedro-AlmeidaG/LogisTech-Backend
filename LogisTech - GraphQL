@@ -1,0 +1,452 @@
+{
+  "info": {
+    "_postman_id": "d619cacf-6936-4b12-a979-ecea86220021",
+    "name": "LogisTech - GraphQL",
+    "description": "Coleção com as queries e mutations GraphQL, mas mantendo os endpoints originais do REST nas requisições, conforme solicitado.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "57889715"
+  },
+  "item": [
+    {
+      "name": "01 - Auth",
+      "item": [
+        {
+          "name": "Registrar Gestor",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation RegisterUser {\n  register(\n    nome: \"Pedro Gestor\", \n    email: \"pedro@logistech.com\", \n    senha: \"123456\", \n    perfil: \"GESTOR\"\n  ) {\n    _id\n    nome\n    email\n    perfil\n  }\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Gestor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();\nif (json.data && json.data.login && json.data.login.token) {\n    pm.collectionVariables.set('token', json.data.login.token);\n    pm.collectionVariables.set('userId', json.data.login.usuario._id);\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation LoginUser {\n  login(\n    email: \"pedro@logistech.com\", \n    senha: \"123456\"\n  ) {\n    token\n    usuario {\n      _id\n      nome\n      email\n      perfil\n    }\n  }\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Users",
+      "item": [
+        {
+          "name": "Listar Usuarios",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query GetUsers {\n  users {\n    _id\n    nome\n    email\n    perfil\n  }\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Usuario por ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query GetUserById($id: ID!) {\n  user(id: $id) {\n    _id\n    nome\n    email\n    perfil\n  }\n}",
+                "variables": "{\n  \"id\": \"{{userId}}\"\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/users/6a97624d3fdacfd2b97b99fc",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "users",
+                "6a97624d3fdacfd2b97b99fc"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Vehicles",
+      "item": [
+        {
+          "name": "Criar Veiculo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation CreateVehicle {\n  createVehicle(\n    placa: \"ABC1D23\",\n    modelo: \"Mercedes-Benz Atego\",\n    ano: 2024,\n    capacidadeKg: 12000,\n    status: \"DISPONIVEL\"\n  ) {\n    _id\n    placa\n    modelo\n    ano\n    capacidadeKg\n    status\n  }\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/vehicles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Veiculos",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query GetVehicles {\n  vehicles {\n    _id\n    placa\n    modelo\n    capacidadeKg\n    status\n  }\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/vehicles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Maintenances",
+      "item": [
+        {
+          "name": "Criar Manutencao",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation CreateMaintenance($veiculoId: ID!) {\n  createMaintenance(\n    veiculoId: $veiculoId,\n    descricao: \"Troca de oleo e filtros\",\n    tipo: \"PREVENTIVA\",\n    custo: 850\n  ) {\n    _id\n    descricao\n    tipo\n    custo\n    veiculo {\n      _id\n      placa\n    }\n  }\n}",
+                "variables": "{\n  \"veiculoId\": \"{{vehicleId}}\"\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/maintenances",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "maintenances"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar Manutencoes do Veiculo",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query GetMaintenancesByVehicle($veiculoId: ID!) {\n  maintenancesByVehicle(veiculoId: $veiculoId) {\n    _id\n    descricao\n    tipo\n    custo\n  }\n}",
+                "variables": "{\n  \"veiculoId\": \"{{vehicleId}}\"\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/maintenances/veiculo/6aa092399b65278a740ca4f9",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "maintenances",
+                "veiculo",
+                "6aa092399b65278a740ca4f9"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Deliveries",
+      "item": [
+        {
+          "name": "Criar Entrega",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation CreateDelivery {\n  createDelivery(\n    codigoRastreio: \"LT001\",\n    origem: \"Campina Grande - PB\",\n    destino: \"Recife - PE\",\n    status: \"PENDENTE\"\n  ) {\n    _id\n    codigoRastreio\n    origem\n    destino\n    status\n  }\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/deliveries",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "deliveries"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Entregas",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query GetDeliveries {\n  deliveries {\n    _id\n    codigoRastreio\n    origem\n    destino\n    status\n  }\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/deliveries",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "deliveries"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rastrear LT001",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query TrackDelivery {\n  deliveryByTrackingCode(codigoRastreio: \"LT001\") {\n    _id\n    codigoRastreio\n    origem\n    destino\n    status\n  }\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/deliveries/rastreio/LT001",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "deliveries",
+                "rastreio",
+                "LT001"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alterar Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation UpdateDeliveryStatus($id: ID!) {\n  updateDeliveryStatus(\n    id: $id,\n    status: \"ENTREGUE\"\n  ) {\n    _id\n    codigoRastreio\n    status\n  }\n}",
+                "variables": "{\n  \"id\": \"{{deliveryId}}\"\n}"
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/deliveries/LT002/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                "LT002",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "vehicleId",
+      "value": ""
+    },
+    {
+      "key": "deliveryId",
+      "value": ""
+    }
+  ]
+}
